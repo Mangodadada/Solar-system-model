@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		canvas {
+			background-image: url(imgs/stars.jpg);
+			background-size: cover;
+		}
+
+		.label {
+			color: #fff;
+			font-size: 16px;
+		}
+	</style>
+	<script type="module">
+		import * as THREE from '../libs/build/three.module.js';
+		import { OrbitControls } from '../libs/jsm/controls/OrbitControls.js'
+		import { CSS2DRenderer, CSS2DObject } from '../libs/jsm/renderers/CSS2DRenderer.js'
+
+
+		// 声明全局变量
+		let camera, scene, renderer, labelRenderer;
+		let Mercury, sun,Venus,Earth,Mars,Jupiter,Saturn,Uranus,Neptun,moon,ring;
+		let clock = new THREE.Clock();
+		// 实例化纹理加载器
+		const textureLoader = new THREE.TextureLoader();
+
+		function init() {
+			// 地球和月球半径大小
+			// const EARTH_RADIUS = 2.5;
+			// const MOON_RADIUS = 0.27;
+            //水星英文名：Mercury
+
+// 金星英文名：Venus
+
+// 地球英文名：Earth
+
+// 火星英文名：Mars
+
+// 木星英文名：Jupiter
+
+// 土星英文名：Saturn
+
+// 天王星英文名： Uranus
+// 海王星英文名： Neptune
+//大小信息
+//太阳：木星：土星：天王星：海王星：地球：金星：火星：水星＝1300000：1317：745：65：57：1：0.86：
+// 水星、金星、地球、火星、木星、土星、天王星、海王星
+            const SUN_RADIUS = 1;
+			const Mercury_RADIUS = 0.27;
+			const Venus_RADIUS= 0.27;
+			const Earth_RADIUS= 0.27;
+			const Mars_RADIUS= 0.27;
+			const Jupiter_RADIUS= 0.5;
+			const Saturn_RADIUS= 0.45;
+			const Uranus_RADIUS= 0.3;
+			const Neptun_RADIUS= 0.27;
+			const moon_RADIUS= 0.1;
+
+			// 实例化相机
+			camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
+			camera.position.set(10, 5, 20);
+
+			// 实例化场景
+			scene = new THREE.Scene();
+			// 创建聚光灯光源创建添加
+			// const dirLight = new THREE.SpotLight(0xffffff);
+			// dirLight.position.set(0, 0, 10);
+			// dirLight.intensity = 2;
+			// dirLight.castShadow = true;
+			// scene.add(dirLight)
+			// 添加环境光
+			// const aLight = new THREE.AmbientLight(0xffffff)
+			// aLight.intensity = 0.3
+			// scene.add(aLight)
+
+			// const pointLight = new THREE.PointLight(0xffffff,0.5);
+			// pointLight.position.set(0, 0, 0);
+			// pointLight.castShadow = true;
+			// scene.add(pointLight);
+/////
+
+		let ambient = new THREE.AmbientLight(new THREE.Color(0xffffff)); //环境光
+     	 scene.add(ambient);
+      	let pointLight = new THREE.PointLight(new THREE.Color(0xffffff), 2, 1, 0); //点光源
+      	pointLight.visible = true;
+      	pointLight.position.set(0, 0, 0); //点光源在原点充当太阳
+      	scene.add(pointLight); //点光源添加到场景中
+
+/////
+
+			//创建月亮
+			const moonGeometry = new THREE.SphereGeometry(moon_RADIUS, 16, 16);
+			const moonMaterial = new THREE.MeshPhongMaterial({
+				map: textureLoader.load('textures/moon_1024.jpg')
+              
+			})
+			moon = new THREE.Mesh(moonGeometry, moonMaterial)
+			moon.receiveShadow = true;
+			moon.castShadow = true;
+			scene.add(moon)
+			// 创建水星
+			const MercuryGeometry = new THREE.SphereGeometry(Mercury_RADIUS, 16, 16);
+			const MercuryMaterial = new THREE.MeshPhongMaterial({
+				map: textureLoader.load('textures/mercury.jpg')
+              
+			})
+			Mercury = new THREE.Mesh(MercuryGeometry, MercuryMaterial)
+			Mercury.receiveShadow = true;
+			Mercury.castShadow = true;
+			scene.add(Mercury)
+			// 创建太阳
+			const sunGeometry = new THREE.SphereGeometry(SUN_RADIUS, 16, 16);
+			const sunMaterial = new THREE.MeshPhongMaterial({
+				map: textureLoader.load('textures/sun.jpg'),
+			})
+
+			sun = new THREE.Mesh(sunGeometry, sunMaterial);
+			sun.receiveShadow = true;
+			sun.castShadow = true;
+			scene.add(sun)
+
+
+			//创建金星
+			const VenusGeometry = new THREE.SphereGeometry(Venus_RADIUS, 16, 16);
+			const VenusMaterial = new THREE.MeshPhongMaterial({
+				map: textureLoader.load('textures/venus.jpg'),
+			})
+
+			Venus = new THREE.Mesh(VenusGeometry, VenusMaterial);
+			Venus.receiveShadow = true;
+			Venus.castShadow = true;
+			scene.add(Venus)
+			//创建地球
+			const EarthGeometry = new THREE.SphereGeometry(Earth_RADIUS, 16, 16);
+			const EarthMaterial = new THREE.MeshPhongMaterial({
+				map: textureLoader.load('textures/earth.jpg'),
+			})
+
+			Earth = new THREE.Mesh(EarthGeometry, EarthMaterial);
+			Earth.receiveShadow = true;
+			Earth.castShadow = true;
+			scene.add(Earth)
+			//创建火星 
+			const MarsGeometry = new THREE.SphereGeometry(Mars_RADIUS, 16, 16);
+			const MarsMaterial = new THREE.MeshPhongMaterial({
+				map: textureLoader.load('textures/mars.jpg'),
+			})
+
+			Mars = new THREE.Mesh(MarsGeometry, MarsMaterial);
+			Mars.receiveShadow = true;
+			Mars.castShadow = true;
+			scene.add(Mars)
+			//创建木星
+			const JupiterGeometry = new THREE.SphereGeometry(Jupiter_RADIUS, 16, 16);
+			const JupiterMaterial = new THREE.MeshPhongMaterial({
+				map: textureLoader.load('textures/jupiter.jpg'),
+			})
+
+			Jupiter = new THREE.Mesh(JupiterGeometry, JupiterMaterial);
+			Jupiter.receiveShadow = true;
+			Jupiter.castShadow = true;
+			scene.add(Jupiter)
+			//创建土星
+			const SaturnGeometry = new THREE.SphereGeometry(Saturn_RADIUS, 16, 16);
+			const SaturnMaterial = new THREE.MeshPhongMaterial({
+				map: textureLoader.load('textures/saturn.jpg'),
+			})
+
+			Saturn = new THREE.Mesh(SaturnGeometry, SaturnMaterial);
+			Saturn.receiveShadow = true;
+			Saturn.castShadow = true;
+			scene.add(Saturn)
+
+			//土星星环
+			// const ringgeometry = new THREE.RingGeometry( 1, 5, 32 );
+			// const ringmaterial = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+			// const ring = new THREE.Mesh( ringgeometry, ringmaterial );
+			// ring.receiveShadow = true;
+			// ring.castShadow = true;
+			// scene.add( ring );
+			//创建天王星
+			const UranusGeometry = new THREE.SphereGeometry(Uranus_RADIUS, 16, 16);
+			const UranusMaterial = new THREE.MeshPhongMaterial({
+				map: textureLoader.load('textures/uranus.jpg'),
+			})
+
+			Uranus = new THREE.Mesh(UranusGeometry, UranusMaterial);
+			Uranus.receiveShadow = true;
+			Uranus.castShadow = true;
+			scene.add(Uranus)
+			//创建海王星
+			const NeptunGeometry = new THREE.SphereGeometry(Neptun_RADIUS, 16, 16);
+			const NeptunMaterial = new THREE.MeshPhongMaterial({
+				map: textureLoader.load('textures/neptune.jpg'),
+			})
+
+			Neptun = new THREE.Mesh(NeptunGeometry, NeptunMaterial);
+			Neptun.receiveShadow = true;
+			Neptun.castShadow = true;
+			scene.add(Neptun)
+
+			// const earthDiv = document.createElement('div');
+			// earthDiv.className = 'label';
+			// earthDiv.textContent = 'Earch';
+
+			// const eartchLabel = new CSS2DObject(earthDiv)
+
+			// eartchLabel.position.set(0, EARTH_RADIUS + 0.5, 0);
+			// earth.add(eartchLabel)
+
+			// const moonDiv = document.createElement('div');
+			// moonDiv.className = 'label';
+			// moonDiv.textContent = 'Moon';
+
+			// const moonLabel = new CSS2DObject(moonDiv)
+
+			// moonLabel.position.set(0, MOON_RADIUS + 0.5, 0);
+			// moon.add(moonLabel)
+
+			// 创建渲染器
+			renderer = new THREE.WebGLRenderer({
+				alpha: true
+			});
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			// 渲染阴影
+			renderer.shadowMap.enabled = true;
+			document.body.appendChild(renderer.domElement)
+
+
+			// 标签渲染器
+			// labelRenderer = new CSS2DRenderer();
+			// labelRenderer.setSize(window.innerWidth, window.innerHeight)
+			// labelRenderer.domElement.style.position = 'absolute';
+			// labelRenderer.domElement.style.top = '0px';
+			// document.body.appendChild(labelRenderer.domElement)
+
+			// 绑定控制和摄像头
+			const controls = new OrbitControls(camera, renderer.domElement)
+		}
+		var oldtime = 0;
+		function animate() {
+            //  水星转
+			const elapsed = clock.getElapsedTime();
+			Mercury.position.set(Math.sin(elapsed*1.1) * 3, 0, Math.cos(elapsed*1.1) * 3);
+			//水星、金星、地球、火星、木星、土星、天王星、海王星
+			//金星转
+			Venus.position.set(Math.sin(elapsed*1.2) * 4, 0, Math.cos(elapsed*1.2) * 4);
+			//地球转
+			Earth.position.set(Math.sin(elapsed*1) * 6, 0, Math.cos(elapsed*1) * 6);
+			//月亮绕地球转
+			moon.position.set(Math.sin(elapsed*1) * 6+Math.sin(elapsed*2) * 0.5, 0, Math.cos(elapsed*1) * 6+Math.cos(elapsed*2) * 0.5);
+			//火星转
+			Mars.position.set(Math.sin(elapsed*1.5) * 9, 0, Math.cos(elapsed*1.5) * 9);
+			//木星转
+			Jupiter.position.set(Math.sin(elapsed*1.3) * 12, 0, Math.cos(elapsed*1.3) * 12);
+			//土星转
+			Saturn.position.set(Math.sin(elapsed*1.1) * 15, 0, Math.cos(elapsed*1.1) * 15);
+			//土星星环
+			// ring.position.set(Math.sin(elapsed*1.1) * 15, 0, Math.cos(elapsed*1.1) * 15);
+			//天王星转
+			Uranus.position.set(Math.sin(elapsed*0.8) * 18, 0, Math.cos(elapsed*0.8) * 18);
+			//海王星转
+			Neptun.position.set(Math.sin(elapsed*1.2) * 21, 0, Math.cos(elapsed*1.2) * 21);
+			// 太阳自转
+			var axis = new THREE.Vector3(0, 1, 0);
+			sun.rotateOnAxis(axis, (elapsed - oldtime) * Math.PI / 10);
+			renderer.render(scene, camera)
+			// labelRenderer.render(scene, camera)
+			oldtime = elapsed;
+			requestAnimationFrame(animate)
+
+
+		}
+
+
+
+		init()
+		animate()
+
+		// 调整尺寸
+		window.onresize = function () {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight)
+		}
+
+
+	</script>
+</head>
+
+<body>
+
+</body>
+
+</html>
